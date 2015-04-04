@@ -1,2 +1,2 @@
 # particle
-Operating system kernel study
+Personal operating system kernel study
