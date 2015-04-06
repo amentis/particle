@@ -1,23 +1,27 @@
 ODIR = obj
+BDIR = build
 ASM = nasm
 ASMFLAGS = -f elf32
-CC = g++
+CX = g++
+CC = gcc
 CFLAGS = -m32 -c
+CXFLAGS = $(CFLAGS)
 LFLAGS = -m elf_i386 -T link.ld
 DEBUG = -g
 
 make:
-	mkdir -p $(ODIR) 
+	mkdir -p $(ODIR)
+	mkdir -p $(BDIR) 
 	#kernel
 	$(ASM) $(ASMFLAGS) kernel/kernel.asm -o $(ODIR)/kasm.o
-	$(CC) $(CFLAGS) kernel/kernel.cpp -o $(ODIR)/kc.o
+	$(CX) $(CXFLAGS) kernel/kernel.cpp -o $(ODIR)/kc.o
 	
 	#keyboard
 	$(ASM) $(ASMFLAGS) keyboard/keyboard.asm -o $(ODIR)/keyasm.o
-	$(CC) $(CFLAGS) keyboard/keyboard.cpp -I keyboard -o $(ODIR)/keyc.o
+	$(CC) $(CFLAGS) keyboard/keyboard.c -I keyboard -o $(ODIR)/keyc.o
 	
 	#link
-	ld $(LFLAGS) $(ODIR)/keyasm.o $(ODIR)/keyc.o $(ODIR)/kasm.o $(ODIR)/kc.o -o particle
+	ld $(LFLAGS) $(ODIR)/kc.o $(ODIR)/keyasm.o $(ODIR)/keyc.o $(ODIR)/kasm.o -o $(BDIR)/particle
 
 clean:
-	rm -f particle $(ODIR)/*.o
+	rm -rf $(BDIR)/particle $(ODIR)/*.o $(BDIR) $(ODIR)

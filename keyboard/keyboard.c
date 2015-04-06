@@ -13,7 +13,7 @@ unsigned int cursor_position = 0;
 extern void kprint_newline();
 extern char *video_memory_start;
 extern unsigned char keyboard_map[128];
-extern unsigned long keyboard_handler();
+extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
@@ -28,15 +28,13 @@ struct IDT_entry {
 
 struct IDT_entry IDT[IDT_SIZE];
 
-
-extern "C"
 void idt_init() {
     unsigned long keyboard_address;
     unsigned long idt_address;
     unsigned long idt_ptr[2];
     
     //populate IDT entry of keyboard interupts
-    keyboard_address = (unsigned long) keyboard_handler();
+    keyboard_address = (unsigned long) keyboard_handler;
     IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
     IDT[0x21].selector = 0x08;
     IDT[0x21].zero = 0;
@@ -65,12 +63,10 @@ void idt_init() {
     load_idt(idt_ptr);
 }
 
-extern "C"
 void kb_init(){
     write_port(0x21 , 0xFD);
 }
 
-extern "C"
 void keyboard_handler_main() {
     unsigned char status;
     char keycode;
@@ -91,6 +87,6 @@ void keyboard_handler_main() {
         }
         
                         video_memory_start[cursor_position++] = keyboard_map[(unsigned char) keycode];
-                        video_memory_start[cursor_position++] = 0x07;
+                        video_memory_start[cursor_position++] = 0xf0;
     }
 }

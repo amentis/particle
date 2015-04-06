@@ -6,8 +6,8 @@
 extern unsigned int cursor_position;
 char *video_memory_start = (char*)0xb8000;
 
-extern void kb_init();
-extern void idt_init();
+extern "C" void kb_init();
+extern "C" void idt_init();
 
 void clear_screen(){
     unsigned int i = 0;
@@ -25,6 +25,7 @@ void kprint(const char *str){
     }
 }
 
+extern "C"
 void kprint_newline(){
     unsigned int line_size = BYTES_FOR_EACH_ELEMENT * COLUMNS_IN_LINE;
     cursor_position = cursor_position + (line_size - cursor_position % (line_size));
