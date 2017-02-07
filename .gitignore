@@ -29,3 +29,9 @@
 *.app
 
 *.swp
+
+# Crosscompiler
+particle-cc/
+
+# Kernel
+particle.bin
